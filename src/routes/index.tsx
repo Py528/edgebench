@@ -70,9 +70,8 @@ function Index() {
   const isDark = theme === "dark";
   return (
     <div
-      className={`min-h-screen font-sans overflow-x-hidden transition-colors duration-700 ${
-        isDark ? "bg-[#0a0b0d] text-white" : "bg-[#f6f4ef] text-[#0a0b0d]"
-      }`}
+      className={`min-h-screen font-sans overflow-x-hidden transition-colors duration-700 ${isDark ? "bg-[#0a0b0d] text-white" : "bg-[#f6f4ef] text-[#0a0b0d]"
+        }`}
     >
       <Nav isDark={isDark} onToggle={toggle} />
       <Hero isDark={isDark} />
@@ -94,9 +93,8 @@ function Nav({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
   return (
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl">
       <div
-        className={`flex items-center justify-between px-4 py-2 rounded-full backdrop-blur-xl border transition-colors ${
-          isDark ? "bg-black/40 border-white/10" : "bg-white/70 border-black/10"
-        }`}
+        className={`flex items-center justify-between px-4 py-2 rounded-full backdrop-blur-xl border transition-colors ${isDark ? "bg-black/40 border-white/10" : "bg-white/70 border-black/10"
+          }`}
       >
         <a href="#" className="flex items-center gap-2 pl-2 group">
           <svg className="w-7 h-7 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -106,10 +104,10 @@ function Nav({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
                 <stop offset="100%" stopColor="#76B900" />
               </linearGradient>
             </defs>
-            <path d="M6 8L16 16L6 24" stroke="url(#logo-grad)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M16 8L26 16L16 24" stroke="url(#logo-grad)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.85"/>
+            <path d="M6 8L16 16L6 24" stroke="url(#logo-grad)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M16 8L26 16L16 24" stroke="url(#logo-grad)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.85" />
           </svg>
-          <span className="font-semibold tracking-tight">edgebench</span>
+          <span className="font-semibold tracking-tight">exportrace</span>
           <span className={`text-xs hidden sm:inline ${isDark ? "text-white/50" : "text-black/50"}`}>v0.1</span>
         </a>
         <nav className={`hidden md:flex items-center gap-6 text-sm ${isDark ? "text-white/70" : "text-black/70"}`}>
@@ -122,9 +120,8 @@ function Nav({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
           <button
             aria-label="Toggle theme"
             onClick={onToggle}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
-              isDark ? "bg-white/10 hover:bg-white/20" : "bg-black/5 hover:bg-black/10"
-            }`}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 ${isDark ? "bg-white/10 hover:bg-white/20" : "bg-black/5 hover:bg-black/10"
+              }`}
           >
             {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
@@ -165,53 +162,40 @@ function Hero({ isDark }: { isDark: boolean }) {
           alt=""
           width={1920}
           height={1280}
-          className={`absolute inset-0 w-full h-full object-cover object-bottom transition-opacity duration-1000 ${
-            isDark ? "opacity-35" : "opacity-15"
-          }`}
+          className={`absolute inset-0 w-full h-full object-cover object-bottom transition-opacity duration-1000 ${isDark ? "opacity-35" : "opacity-15"
+            }`}
         />
         <div
-          className={`absolute inset-0 transition-colors duration-700 ${
-            isDark
+          className={`absolute inset-0 transition-colors duration-700 ${isDark
               ? "bg-gradient-to-b from-[#0a0b0d] via-[#0a0b0d]/75 to-[#0a0b0d]"
               : "bg-gradient-to-b from-[#f6f4ef] via-[#f6f4ef]/85 to-[#f6f4ef]"
-          }`}
+            }`}
         />
         {/* soft blobs */}
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-emerald-500/15 blur-3xl animate-pulse" />
         <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-[#76B900]/10 blur-3xl" />
       </div>
- 
+
       <div className="relative z-10 max-w-5xl mx-auto text-center pt-16 md:pt-24">
-        <Reveal>
-          <div
-            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full backdrop-blur border text-xs mb-8 ${
-              isDark ? "bg-white/5 border-white/10 text-white/70" : "bg-black/5 border-black/10 text-black/70"
-            }`}
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#76B900] animate-pulse" />
-            Week 1 build — for Ultralytics YOLO
-          </div>
-        </Reveal>
- 
+
         <Reveal delay={80}>
           <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-tight">
             One command.<br />
             <span className="italic opacity-90">Your best export config.</span>
           </h1>
         </Reveal>
- 
+
         <Reveal delay={180}>
           <p className={`mt-8 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed ${isDark ? "text-white/70" : "text-black/70"}`}>
-            Stop guessing between ONNX, CoreML, and PyTorch. <span className={isDark ? "text-white" : "text-black"}>edgebench</span>{" "}
+            Stop guessing between ONNX, CoreML, and PyTorch. <span className={isDark ? "text-white" : "text-black"}>exportrace</span>{" "}
             benchmarks every backend and precision on <em>your</em> machine — and tells you which one to ship.
           </p>
         </Reveal>
- 
+
         <Reveal delay={260}>
           <div className="mt-10 flex flex-col items-center justify-center gap-3">
-            <div className={`w-full max-w-md p-6 rounded-2xl border backdrop-blur-md ${
-              isDark ? "bg-black/45 border-white/10" : "bg-white/75 border-black/10"
-            }`}>
+            <div className={`w-full max-w-md p-6 rounded-2xl border backdrop-blur-md ${isDark ? "bg-black/45 border-white/10" : "bg-white/75 border-black/10"
+              }`}>
               <WaitlistForm isDark={isDark} />
             </div>
             <a
@@ -241,8 +225,8 @@ const joinWaitlistServerFn = createServerFn("POST", async (payload: any) => {
   const fs = await import("node:fs");
   const path = await import("node:path");
   const filePath = path.join(process.cwd(), "waitlist_emails.txt");
-  const data = typeof payload === 'object' && payload !== null 
-    ? (typeof payload.data === 'string' ? payload.data : JSON.stringify(payload.data || payload)) 
+  const data = typeof payload === 'object' && payload !== null
+    ? (typeof payload.data === 'string' ? payload.data : JSON.stringify(payload.data || payload))
     : String(payload);
   fs.appendFileSync(filePath, `${data}\n`);
   return { success: true };
@@ -289,7 +273,7 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
           body: JSON.stringify({
             access_key: web3Key,
             email: email,
-            subject: "New Edgebench Waitlist Signup",
+            subject: "New Exportrace Waitlist Signup",
             message: `New subscriber email: ${email}\nHardware/OS: ${hardware}\nFrustration: ${painPoint}`,
           }),
         });
@@ -335,11 +319,10 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={loading}
-          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border ${
-            isDark 
-              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border ${isDark
+              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
               : "bg-black/[0.02] border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
-          }`}
+            }`}
         />
       </div>
 
@@ -353,11 +336,10 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
           value={hardware}
           onChange={(e) => setHardware(e.target.value)}
           disabled={loading}
-          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border ${
-            isDark 
-              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border ${isDark
+              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
               : "bg-black/[0.02] border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
-          }`}
+            }`}
         />
       </div>
 
@@ -371,11 +353,10 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
           onChange={(e) => setPainPoint(e.target.value)}
           disabled={loading}
           rows={3}
-          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border resize-none ${
-            isDark 
-              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border resize-none ${isDark
+              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
               : "bg-black/[0.02] border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
-          }`}
+            }`}
         />
       </div>
 
@@ -399,16 +380,14 @@ function CopyCommand({ cmd, isDark }: { cmd: string; isDark: boolean }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
       }}
-      className={`group flex items-center gap-3 pl-4 pr-2 py-2 rounded-full backdrop-blur-xl border transition text-sm font-mono hover:scale-[1.02] ${
-        isDark ? "bg-black/60 border-white/15 hover:border-white/30" : "bg-white/80 border-black/15 hover:border-black/30"
-      }`}
+      className={`group flex items-center gap-3 pl-4 pr-2 py-2 rounded-full backdrop-blur-xl border transition text-sm font-mono hover:scale-[1.02] ${isDark ? "bg-black/60 border-white/15 hover:border-white/30" : "bg-white/80 border-black/15 hover:border-black/30"
+        }`}
     >
       <span className="text-[#76B900] font-bold">$</span>
       <span className="hidden sm:inline">{cmd}</span>
-      <span className="sm:hidden">edgebench run model.pt</span>
-      <span className={`ml-2 px-3 py-1.5 rounded-full text-xs font-sans font-medium transition ${
-        copied ? "bg-emerald-400 text-black" : isDark ? "bg-white text-black" : "bg-black text-white"
-      }`}>
+      <span className="sm:hidden">exportrace run model.pt</span>
+      <span className={`ml-2 px-3 py-1.5 rounded-full text-xs font-sans font-medium transition ${copied ? "bg-emerald-400 text-black" : isDark ? "bg-white text-black" : "bg-black text-white"
+        }`}>
         {copied ? "copied" : "copy"}
       </span>
     </button>
@@ -495,21 +474,21 @@ function Terminal({ isDark }: { isDark: boolean }) {
               <span className="ml-auto text-[10px] text-[#76B900] uppercase tracking-wider font-mono border border-[#76B900]/30 px-2 py-0.5 rounded font-bold">Simulated Output Concept</span>
             </div>
             <pre className="p-6 text-sm font-mono leading-relaxed overflow-x-auto">
-<span className="text-[#76B900] font-bold">$</span> <span className="text-white">edgebench run yolov8n.pt</span>{"\n"}
-<span className="text-white/50">▸ detecting environment... macOS 14.5, Apple M2, 16GB{"\n"}</span>
-<span className="text-white/50">▸ available backends: PyTorch (MPS), PyTorch (CPU), ONNX (CPU), CoreML{"\n"}</span>
-<span className="text-white/50">▸ exporting yolov8n.pt → onnx, coreml ... </span><span className="text-green-400">done{"\n"}</span>
-<span className="text-white/50">▸ benchmarking (100 iterations, imgsz=640) ...{"\n\n"}</span>
-<span className="text-cyan-300">┌──────────────┬───────────┬───────────┬────────┬──────────┬──────────┐{"\n"}</span>
-<span className="text-cyan-300">│ backend      │ format    │ precision │  FPS   │ latency  │  Δ acc   │{"\n"}</span>
-<span className="text-cyan-300">├──────────────┼───────────┼───────────┼────────┼──────────┼──────────┤{"\n"}</span>
-<span className="text-white">│ PyTorch      │ .pt       │ FP32      │  42.1  │  23.7 ms │  0.0000  │{"\n"}</span>
-<span className="text-white">│ PyTorch/MPS  │ .pt       │ FP16      │  118.6 │   8.4 ms │  0.0021  │{"\n"}</span>
-<span className="text-white">│ ONNX Runtime │ .onnx     │ FP32      │  61.3  │  16.3 ms │  0.0004  │{"\n"}</span>
-<span className="text-emerald-400 font-bold">│ CoreML       │ .mlpackage│ FP16      │  184.2 │   5.4 ms │  0.0018  │ ★{"\n"}</span>
-<span className="text-cyan-300">└──────────────┴───────────┴───────────┴────────┴──────────┴──────────┘{"\n\n"}</span>
-<span className="text-green-400">✓ recommendation: CoreML FP16 — 4.4× faster than baseline, Δ acc negligible{"\n"}</span>
-<span className="text-white/50">▸ report written to </span><span className="text-white">benchmark_report.md</span>
+              <span className="text-[#76B900] font-bold">$</span> <span className="text-white">exportrace run yolov8n.pt</span>{"\n"}
+              <span className="text-white/50">▸ detecting environment... macOS 14.5, Apple M2, 16GB{"\n"}</span>
+              <span className="text-white/50">▸ available backends: PyTorch (MPS), PyTorch (CPU), ONNX (CPU), CoreML{"\n"}</span>
+              <span className="text-white/50">▸ exporting yolov8n.pt → onnx, coreml ... </span><span className="text-green-400">done{"\n"}</span>
+              <span className="text-white/50">▸ benchmarking (100 iterations, imgsz=640) ...{"\n\n"}</span>
+              <span className="text-cyan-300">┌──────────────┬───────────┬───────────┬────────┬──────────┬──────────┐{"\n"}</span>
+              <span className="text-cyan-300">│ backend      │ format    │ precision │  FPS   │ latency  │  Δ acc   │{"\n"}</span>
+              <span className="text-cyan-300">├──────────────┼───────────┼───────────┼────────┼──────────┼──────────┤{"\n"}</span>
+              <span className="text-white">│ PyTorch      │ .pt       │ FP32      │  42.1  │  23.7 ms │  0.0000  │{"\n"}</span>
+              <span className="text-white">│ PyTorch/MPS  │ .pt       │ FP16      │  118.6 │   8.4 ms │  0.0021  │{"\n"}</span>
+              <span className="text-white">│ ONNX Runtime │ .onnx     │ FP32      │  61.3  │  16.3 ms │  0.0004  │{"\n"}</span>
+              <span className="text-emerald-400 font-bold">│ CoreML       │ .mlpackage│ FP16      │  184.2 │   5.4 ms │  0.0018  │ ★{"\n"}</span>
+              <span className="text-cyan-300">└──────────────┴───────────┴───────────┴────────┴──────────┴──────────┘{"\n\n"}</span>
+              <span className="text-green-400">✓ recommendation: CoreML FP16 — 4.4× faster than baseline, Δ acc negligible{"\n"}</span>
+              <span className="text-white/50">▸ report written to </span><span className="text-white">benchmark_report.md</span>
             </pre>
           </div>
         </Reveal>
@@ -560,9 +539,8 @@ function Features({ isDark }: { isDark: boolean }) {
           {features.map((f, i) => (
             <Reveal key={i} delay={i * 60}>
               <div
-                className={`h-full p-8 transition-all duration-300 hover:-translate-y-1 group ${
-                  isDark ? "bg-[#0a0b0d] hover:bg-white/[0.03]" : "bg-[#f6f4ef] hover:bg-white"
-                }`}
+                className={`h-full p-8 transition-all duration-300 hover:-translate-y-1 group ${isDark ? "bg-[#0a0b0d] hover:bg-white/[0.03]" : "bg-[#f6f4ef] hover:bg-white"
+                  }`}
               >
                 <div className="text-[#76B900] font-mono text-xs mb-4">0{i + 1}</div>
                 <h3 className="font-serif text-2xl mb-3 group-hover:text-[#76B900] transition-colors">{f.title}</h3>
@@ -596,9 +574,8 @@ function BackendsGrid({ isDark }: { isDark: boolean }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {groups.map((g, gi) => (
             <Reveal key={g.label} delay={gi * 80}>
-              <div className={`rounded-2xl p-6 border h-full transition hover:-translate-y-1 hover:shadow-xl ${
-                isDark ? "bg-white/[0.03] border-white/10 hover:border-[#76B900]/40" : "bg-white border-black/10 hover:border-[#76B900]/60"
-              }`}>
+              <div className={`rounded-2xl p-6 border h-full transition hover:-translate-y-1 hover:shadow-xl ${isDark ? "bg-white/[0.03] border-white/10 hover:border-[#76B900]/40" : "bg-white border-black/10 hover:border-[#76B900]/60"
+                }`}>
                 <div className={`text-xs uppercase tracking-widest mb-4 ${isDark ? "text-white/40" : "text-black/40"}`}>{g.label}</div>
                 <div className="space-y-2">
                   {g.items.map((it) => (
@@ -643,9 +620,8 @@ function ReportPreview({ isDark }: { isDark: boolean }) {
           </div>
         </Reveal>
         <Reveal delay={150}>
-          <div className={`rounded-xl border p-6 font-mono text-xs leading-relaxed shadow-2xl ${
-            isDark ? "bg-white/[0.02] border-white/10 text-white/80" : "bg-white border-black/10 text-black/80"
-          }`}>
+          <div className={`rounded-xl border p-6 font-mono text-xs leading-relaxed shadow-2xl ${isDark ? "bg-white/[0.02] border-white/10 text-white/80" : "bg-white border-black/10 text-black/80"
+            }`}>
             <div className={isDark ? "text-white/40" : "text-black/40"}># benchmark_report.md</div>
             <div className="mt-4"><span className="text-[#76B900] font-bold"># Machine</span></div>
             <div>- OS: macOS 14.5 (Sonoma)</div>
@@ -685,11 +661,11 @@ function CodeSnippet({ isDark }: { isDark: boolean }) {
               <span className="text-[10px] text-[#76B900] uppercase tracking-wider font-mono border border-[#76B900]/30 px-2 py-0.5 rounded font-bold">Concept Mockup</span>
             </div>
             <pre className="p-6 text-sm font-mono leading-relaxed overflow-x-auto">
-<span className="text-pink-400">from</span> <span className="text-cyan-300">edgebench</span> <span className="text-pink-400">import</span> benchmark{"\n\n"}
-report = benchmark(<span className="text-emerald-400">"yolov8n.pt"</span>, imgsz=<span className="text-emerald-400">640</span>, iters=<span className="text-emerald-400">100</span>){"\n"}
-report.save(<span className="text-emerald-400">"benchmark_report.md"</span>){"\n\n"}
-<span className="text-white/50"># Fail CI if the best backend can't hit 60 FPS</span>{"\n"}
-<span className="text-pink-400">assert</span> report.best.fps &gt; <span className="text-emerald-400">60</span>, report.summary()
+              <span className="text-pink-400">from</span> <span className="text-cyan-300">exportrace</span> <span className="text-pink-400">import</span> benchmark{"\n\n"}
+              report = benchmark(<span className="text-emerald-400">"yolov8n.pt"</span>, imgsz=<span className="text-emerald-400">640</span>, iters=<span className="text-emerald-400">100</span>){"\n"}
+              report.save(<span className="text-emerald-400">"benchmark_report.md"</span>){"\n\n"}
+              <span className="text-white/50"># Fail CI if the best backend can't hit 60 FPS</span>{"\n"}
+              <span className="text-pink-400">assert</span> report.best.fps &gt; <span className="text-emerald-400">60</span>, report.summary()
             </pre>
           </div>
         </Reveal>
@@ -730,22 +706,36 @@ function CTA({ isDark }: { isDark: boolean }) {
 function Footer({ isDark }: { isDark: boolean }) {
   return (
     <footer className={`border-t py-10 px-4 ${isDark ? "border-white/5" : "border-black/5"}`}>
-      <div className={`max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm ${isDark ? "text-white/40" : "text-black/40"}`}>
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="logo-grad-footer" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#A3E635" />
-                <stop offset="100%" stopColor="#76B900" />
-              </linearGradient>
-            </defs>
-            <path d="M6 8L16 16L6 24" stroke="url(#logo-grad-footer)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M16 8L26 16L16 24" stroke="url(#logo-grad-footer)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.85"/>
-          </svg>
-          <span>edgebench — MIT licensed</span>
+      <div className={`max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${isDark ? "text-white/40" : "text-black/40"}`}>
+        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="logo-grad-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#A3E635" />
+                  <stop offset="100%" stopColor="#76B900" />
+                </linearGradient>
+              </defs>
+              <path d="M6 8L16 16L6 24" stroke="url(#logo-grad-footer)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M16 8L26 16L16 24" stroke="url(#logo-grad-footer)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.85" />
+            </svg>
+            <span>exportrace — MIT licensed</span>
+          </div>
+          <span className="hidden sm:inline opacity-30">|</span>
+          <div className="flex items-center gap-2">
+            <span>Built by <a href="https://github.com/Py528" target="_blank" rel="noopener noreferrer" className="hover:text-[#76B900] underline underline-offset-2 transition-colors">Pranaav Shinde</a></span>
+            <div className="flex items-center gap-2 ml-1">
+              <a href="https://x.com/Pranaav2412" target="_blank" rel="noopener noreferrer" aria-label="Twitter / X" className="hover:text-[#76B900] transition-colors">
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+              </a>
+              <a href="https://www.linkedin.com/in/pranaavshinde/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-[#76B900] transition-colors">
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+              </a>
+            </div>
+          </div>
         </div>
         <div className="flex gap-6">
-          <a href="https://github.com/pranavshinde/edgebench" target="_blank" rel="noopener noreferrer" className="hover:opacity-100 opacity-70">GitHub</a>
+          <a href="https://github.com/Py528/exportrace" target="_blank" rel="noopener noreferrer" className="hover:opacity-100 opacity-70">GitHub</a>
         </div>
       </div>
     </footer>

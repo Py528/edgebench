@@ -77,17 +77,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "edgebench — One command. Your best YOLO export config." },
+      { title: "exportrace — One command. Your best YOLO export config." },
       {
         name: "description",
         content:
-          "edgebench benchmarks every export format and precision for your Ultralytics YOLO model on your machine — and tells you which one to ship.",
+          "exportrace benchmarks every export format and precision for your Ultralytics YOLO model on your machine — and tells you which one to ship.",
       },
-      { property: "og:title", content: "edgebench — One command. Your best YOLO export config." },
+      { property: "og:title", content: "exportrace — One command. Your best YOLO export config." },
       {
         property: "og:description",
         content:
-          "Stop guessing between ONNX, CoreML, and PyTorch. edgebench run model.pt gives you FPS, latency, and accuracy delta across every backend on your machine.",
+          "Stop guessing between ONNX, CoreML, and PyTorch. exportrace run model.pt gives you FPS, latency, and accuracy delta across every backend on your machine.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
