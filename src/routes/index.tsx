@@ -78,7 +78,6 @@ function Index() {
       <Hero isDark={isDark} />
       <TrustBar isDark={isDark} />
       <QuoteSection isDark={isDark} />
-      <Testimonial isDark={isDark} />
       <Terminal isDark={isDark} />
       <Features isDark={isDark} />
       <BackendsGrid isDark={isDark} />
@@ -167,21 +166,21 @@ function Hero({ isDark }: { isDark: boolean }) {
           width={1920}
           height={1280}
           className={`absolute inset-0 w-full h-full object-cover object-bottom transition-opacity duration-1000 ${
-            isDark ? "opacity-90" : "opacity-25"
+            isDark ? "opacity-35" : "opacity-15"
           }`}
         />
         <div
           className={`absolute inset-0 transition-colors duration-700 ${
             isDark
-              ? "bg-gradient-to-b from-[#0a0b0d] via-transparent to-[#0a0b0d]"
-              : "bg-gradient-to-b from-[#f6f4ef] via-[#f6f4ef]/60 to-[#f6f4ef]"
+              ? "bg-gradient-to-b from-[#0a0b0d] via-[#0a0b0d]/75 to-[#0a0b0d]"
+              : "bg-gradient-to-b from-[#f6f4ef] via-[#f6f4ef]/85 to-[#f6f4ef]"
           }`}
         />
         {/* soft blobs */}
         <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-emerald-500/15 blur-3xl animate-pulse" />
         <div className="absolute top-1/3 -right-40 w-[500px] h-[500px] rounded-full bg-[#76B900]/10 blur-3xl" />
       </div>
-
+ 
       <div className="relative z-10 max-w-5xl mx-auto text-center pt-16 md:pt-24">
         <Reveal>
           <div
@@ -193,27 +192,31 @@ function Hero({ isDark }: { isDark: boolean }) {
             Week 1 build — for Ultralytics YOLO
           </div>
         </Reveal>
-
+ 
         <Reveal delay={80}>
           <h1 className="font-serif text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-tight">
             One command.<br />
             <span className="italic opacity-90">Your best export config.</span>
           </h1>
         </Reveal>
-
+ 
         <Reveal delay={180}>
           <p className={`mt-8 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed ${isDark ? "text-white/70" : "text-black/70"}`}>
             Stop guessing between ONNX, CoreML, and PyTorch. <span className={isDark ? "text-white" : "text-black"}>edgebench</span>{" "}
             benchmarks every backend and precision on <em>your</em> machine — and tells you which one to ship.
           </p>
         </Reveal>
-
+ 
         <Reveal delay={260}>
           <div className="mt-10 flex flex-col items-center justify-center gap-3">
-            <WaitlistForm isDark={isDark} />
+            <div className={`w-full max-w-md p-6 rounded-2xl border backdrop-blur-md ${
+              isDark ? "bg-black/45 border-white/10" : "bg-white/75 border-black/10"
+            }`}>
+              <WaitlistForm isDark={isDark} />
+            </div>
             <a
               href="#report"
-              className={`text-xs mt-2 transition hover:opacity-100 opacity-60 underline`}
+              className={`text-xs mt-3 transition hover:opacity-100 opacity-60 underline`}
             >
               See a sample report below
             </a>
@@ -234,19 +237,21 @@ function Hero({ isDark }: { isDark: boolean }) {
 
 function Dot() { return <span className="w-1 h-1 rounded-full bg-[#76B900]" />; }
 
-const joinWaitlistServerFn = createServerFn("POST", async (email: string) => {
-  if (!email || !email.includes("@")) {
-    throw new Error("Invalid email address");
-  }
+const joinWaitlistServerFn = createServerFn("POST", async (payload: any) => {
   const fs = await import("node:fs");
   const path = await import("node:path");
   const filePath = path.join(process.cwd(), "waitlist_emails.txt");
-  fs.appendFileSync(filePath, `${email}\n`);
+  const data = typeof payload === 'object' && payload !== null 
+    ? (typeof payload.data === 'string' ? payload.data : JSON.stringify(payload.data || payload)) 
+    : String(payload);
+  fs.appendFileSync(filePath, `${data}\n`);
   return { success: true };
 });
 
 function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "center" | "left" }) {
   const [email, setEmail] = useState("");
+  const [hardware, setHardware] = useState("");
+  const [painPoint, setPainPoint] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -256,8 +261,15 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
 
     setLoading(true);
     try {
+      const signupData = JSON.stringify({
+        email,
+        hardware,
+        painPoint,
+        timestamp: new Date().toISOString()
+      });
+
       // 1. Try local server function first
-      const res = await joinWaitlistServerFn({ data: email });
+      const res = await joinWaitlistServerFn({ data: signupData });
       if (res && res.success) {
         setSubmitted(true);
         return;
@@ -278,7 +290,7 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
             access_key: web3Key,
             email: email,
             subject: "New Edgebench Waitlist Signup",
-            message: `New subscriber email: ${email}`,
+            message: `New subscriber email: ${email}\nHardware/OS: ${hardware}\nFrustration: ${painPoint}`,
           }),
         });
 
@@ -292,7 +304,7 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
 
       // 3. Last fallback: save in browser localStorage so the lead is never lost
       const list = JSON.parse(localStorage.getItem("eb-waitlist") || "[]");
-      localStorage.setItem("eb-waitlist", JSON.stringify([...list, email]));
+      localStorage.setItem("eb-waitlist", JSON.stringify([...list, { email, hardware, painPoint, date: new Date().toISOString() }]));
       setSubmitted(true);
     } finally {
       setLoading(false);
@@ -311,24 +323,66 @@ function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "
   }
 
   return (
-    <form onSubmit={handleSubmit} className={`flex flex-col sm:flex-row items-center gap-2.5 w-full max-w-md ${align === "center" ? "mx-auto" : ""}`}>
-      <input
-        type="email"
-        placeholder="Enter your email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        disabled={loading}
-        className={`w-full px-5 py-3 rounded-full text-sm font-sans focus:outline-none transition-all duration-300 border ${
-          isDark 
-            ? "bg-black/60 border-white/10 text-white placeholder-white/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
-            : "bg-white border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
-        }`}
-      />
+    <form onSubmit={handleSubmit} className={`flex flex-col gap-4 w-full max-w-md ${align === "center" ? "mx-auto text-left" : "text-left"}`}>
+      <div>
+        <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-white/60" : "text-black/60"}`}>
+          Email Address <span className="text-[#76B900]">*</span>
+        </label>
+        <input
+          type="email"
+          placeholder="name@company.com"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
+          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border ${
+            isDark 
+              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+              : "bg-black/[0.02] border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
+          }`}
+        />
+      </div>
+
+      <div>
+        <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-white/60" : "text-black/60"}`}>
+          Your Target Hardware / OS Setup <span className="text-white/30">(optional)</span>
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. Apple M3 Max Sonoma, Nvidia RTX 4090 Ubuntu"
+          value={hardware}
+          onChange={(e) => setHardware(e.target.value)}
+          disabled={loading}
+          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border ${
+            isDark 
+              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+              : "bg-black/[0.02] border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
+          }`}
+        />
+      </div>
+
+      <div>
+        <label className={`block text-xs font-semibold mb-1.5 ${isDark ? "text-white/60" : "text-black/60"}`}>
+          Biggest frustration when exporting models? <span className="text-white/30">(optional)</span>
+        </label>
+        <textarea
+          placeholder="e.g. CoreML conversion bugs, ONNX Runtime dependency hell..."
+          value={painPoint}
+          onChange={(e) => setPainPoint(e.target.value)}
+          disabled={loading}
+          rows={3}
+          className={`w-full px-4 py-2.5 rounded-xl text-sm font-sans focus:outline-none transition-all duration-300 border resize-none ${
+            isDark 
+              ? "bg-white/[0.03] border-white/10 text-white placeholder-white/30 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+              : "bg-black/[0.02] border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
+          }`}
+        />
+      </div>
+
       <button
         type="submit"
         disabled={loading}
-        className="w-full sm:w-auto px-6 py-3 rounded-full text-sm font-medium font-sans bg-[#76B900] text-black hover:bg-[#85ce00] transition-colors duration-300 cursor-pointer shadow-lg shadow-[#76B900]/20 shrink-0 font-bold disabled:opacity-50"
+        className="w-full mt-2 px-6 py-3 rounded-xl text-sm font-medium font-sans bg-[#76B900] text-black hover:bg-[#85ce00] transition-colors duration-300 cursor-pointer shadow-lg shadow-[#76B900]/20 shrink-0 font-bold disabled:opacity-50"
       >
         {loading ? "Joining..." : "Join Waitlist"}
       </button>
@@ -416,43 +470,7 @@ function QuoteSection({ isDark }: { isDark: boolean }) {
   );
 }
 
-// ---------- Testimonial ----------
-function Testimonial({ isDark }: { isDark: boolean }) {
-  return (
-    <section className="py-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <Reveal>
-          <div
-            className={`relative rounded-3xl p-10 md:p-14 backdrop-blur border overflow-hidden ${
-              isDark ? "bg-white/[0.03] border-white/10" : "bg-white border-black/10 shadow-2xl shadow-black/5"
-            }`}
-          >
-            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-[#76B900]/15 blur-3xl" />
-            <div className="relative">
-              <div className="text-[#76B900] font-serif text-6xl leading-none mb-4">"</div>
-              <p className="font-serif text-2xl md:text-3xl leading-snug tracking-tight">
-                I ran <span className="italic">edgebench</span> on my M2 the night before a demo and
-                shipped a 4× speedup without touching training code. This should be part of every
-                YOLO project's checklist.
-              </p>
-              <div className="mt-8 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-emerald-400 to-[#76B900] flex items-center justify-center text-black font-bold shadow-lg shadow-emerald-500/20">
-                  MK
-                </div>
-                <div>
-                  <div className="font-medium">Maya Kaur</div>
-                  <div className={`text-sm ${isDark ? "text-white/50" : "text-black/50"}`}>
-                    CV Engineer · shipping realtime detection since 2019
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
+
 
 // ---------- Terminal ----------
 function Terminal({ isDark }: { isDark: boolean }) {
@@ -461,7 +479,7 @@ function Terminal({ isDark }: { isDark: boolean }) {
       <div className="max-w-4xl mx-auto">
         <Reveal>
           <div className="text-center mb-10">
-            <p className={`text-xs uppercase tracking-[0.2em] mb-3 ${isDark ? "text-white/40" : "text-black/40"}`}>Live in your shell</p>
+            <p className={`text-xs uppercase tracking-[0.2em] mb-3 ${isDark ? "text-white/40" : "text-black/40"}`}>Proposed Shell API (Concept)</p>
             <h2 className="font-serif text-3xl sm:text-5xl leading-tight tracking-tight">
               One command. <span className="italic">Every backend measured.</span>
             </h2>
@@ -474,6 +492,7 @@ function Terminal({ isDark }: { isDark: boolean }) {
               <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
               <div className="w-3 h-3 rounded-full bg-green-500/70" />
               <span className="ml-3 text-xs text-white/40 font-mono">~/projects/yolo-detector</span>
+              <span className="ml-auto text-[10px] text-[#76B900] uppercase tracking-wider font-mono border border-[#76B900]/30 px-2 py-0.5 rounded font-bold">Simulated Output Concept</span>
             </div>
             <pre className="p-6 text-sm font-mono leading-relaxed overflow-x-auto">
 <span className="text-[#76B900] font-bold">$</span> <span className="text-white">edgebench run yolov8n.pt</span>{"\n"}
@@ -653,7 +672,7 @@ function CodeSnippet({ isDark }: { isDark: boolean }) {
       <div className="max-w-4xl mx-auto">
         <Reveal>
           <div className="text-center mb-10">
-            <p className={`text-xs uppercase tracking-[0.2em] mb-3 ${isDark ? "text-white/40" : "text-black/40"}`}>Python API</p>
+            <p className={`text-xs uppercase tracking-[0.2em] mb-3 ${isDark ? "text-white/40" : "text-black/40"}`}>Python API (Concept)</p>
             <h2 className="font-serif text-3xl sm:text-5xl tracking-tight">
               Or wire it into CI. <span className="italic">Three lines.</span>
             </h2>
@@ -663,7 +682,7 @@ function CodeSnippet({ isDark }: { isDark: boolean }) {
           <div className="rounded-2xl border border-white/10 bg-black/80 overflow-hidden shadow-2xl text-white">
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/[0.02]">
               <span className="text-xs font-mono text-white/40">bench.py</span>
-              <span className="text-xs text-white/40">python 3.10+</span>
+              <span className="text-[10px] text-[#76B900] uppercase tracking-wider font-mono border border-[#76B900]/30 px-2 py-0.5 rounded font-bold">Concept Mockup</span>
             </div>
             <pre className="p-6 text-sm font-mono leading-relaxed overflow-x-auto">
 <span className="text-pink-400">from</span> <span className="text-cyan-300">edgebench</span> <span className="text-pink-400">import</span> benchmark{"\n\n"}
@@ -726,9 +745,7 @@ function Footer({ isDark }: { isDark: boolean }) {
           <span>edgebench — MIT licensed</span>
         </div>
         <div className="flex gap-6">
-          <a href="#" className="hover:opacity-100 opacity-70">GitHub</a>
-          <a href="#" className="hover:opacity-100 opacity-70">Docs</a>
-          <a href="#" className="hover:opacity-100 opacity-70">Changelog</a>
+          <a href="https://github.com/pranavshinde/edgebench" target="_blank" rel="noopener noreferrer" className="hover:opacity-100 opacity-70">GitHub</a>
         </div>
       </div>
     </footer>
