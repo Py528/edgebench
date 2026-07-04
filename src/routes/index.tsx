@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import heroImg from "@/assets/hero.png";
 
@@ -116,7 +117,7 @@ function Nav({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
           <a href="#how" className="hover:opacity-100 opacity-80 transition">How it works</a>
           <a href="#report" className="hover:opacity-100 opacity-80 transition">Report</a>
           <a href="#backends" className="hover:opacity-100 opacity-80 transition">Backends</a>
-          <a href="#install" className="hover:opacity-100 opacity-80 transition">Install</a>
+          <a href="#waitlist" className="hover:opacity-100 opacity-80 transition">Waitlist</a>
         </nav>
         <div className="flex items-center gap-2">
           <button
@@ -129,12 +130,10 @@ function Nav({ isDark, onToggle }: { isDark: boolean; onToggle: () => void }) {
             {isDark ? <SunIcon /> : <MoonIcon />}
           </button>
           <a
-            href="#install"
-            className={`text-sm px-4 py-1.5 rounded-full font-medium transition hover:scale-105 ${
-              isDark ? "bg-white text-black hover:bg-white/90" : "bg-black text-white hover:bg-black/90"
-            }`}
+            href="#waitlist"
+            className="text-sm px-4 py-1.5 rounded-full font-medium transition hover:scale-105 bg-[#76B900] text-black hover:bg-[#85ce00]"
           >
-            pip install
+            Join Waitlist
           </a>
         </div>
       </div>
@@ -210,16 +209,13 @@ function Hero({ isDark }: { isDark: boolean }) {
         </Reveal>
 
         <Reveal delay={260}>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <CopyCommand cmd="pip install edgebench && edgebench run model.pt" isDark={isDark} />
-            <span className={isDark ? "text-white/40 text-sm" : "text-black/40 text-sm"}>or</span>
+          <div className="mt-10 flex flex-col items-center justify-center gap-3">
+            <WaitlistForm isDark={isDark} />
             <a
               href="#report"
-              className={`text-sm px-5 py-3 rounded-full border transition hover:scale-105 ${
-                isDark ? "border-white/20 hover:bg-white/5" : "border-black/20 hover:bg-black/5"
-              }`}
+              className={`text-xs mt-2 transition hover:opacity-100 opacity-60 underline`}
             >
-              See a sample report →
+              See a sample report below
             </a>
           </div>
         </Reveal>
@@ -237,6 +233,108 @@ function Hero({ isDark }: { isDark: boolean }) {
 }
 
 function Dot() { return <span className="w-1 h-1 rounded-full bg-[#76B900]" />; }
+
+const joinWaitlistServerFn = createServerFn("POST", async (email: string) => {
+  if (!email || !email.includes("@")) {
+    throw new Error("Invalid email address");
+  }
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const filePath = path.join(process.cwd(), "waitlist_emails.txt");
+  fs.appendFileSync(filePath, `${email}\n`);
+  return { success: true };
+});
+
+function WaitlistForm({ isDark, align = "center" }: { isDark: boolean; align?: "center" | "left" }) {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes("@")) return;
+
+    setLoading(true);
+    try {
+      // 1. Try local server function first
+      const res = await joinWaitlistServerFn({ data: email });
+      if (res && res.success) {
+        setSubmitted(true);
+        return;
+      }
+      throw new Error("Local server action failed");
+    } catch (err) {
+      console.warn("Server action failed, using web3forms:", err);
+      // 2. Fallback to Web3Forms (unlimited free submissions directly to email inbox)
+      try {
+        const web3Key = import.meta.env.VITE_WEB3FORMS_KEY || "2f91df58-bfb6-455b-869f-43e60113c230";
+        const web3Response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            access_key: web3Key,
+            email: email,
+            subject: "New Edgebench Waitlist Signup",
+            message: `New subscriber email: ${email}`,
+          }),
+        });
+
+        if (web3Response.ok) {
+          setSubmitted(true);
+          return;
+        }
+      } catch (web3Err) {
+        console.warn("Web3Forms fallback failed:", web3Err);
+      }
+
+      // 3. Last fallback: save in browser localStorage so the lead is never lost
+      const list = JSON.parse(localStorage.getItem("eb-waitlist") || "[]");
+      localStorage.setItem("eb-waitlist", JSON.stringify([...list, email]));
+      setSubmitted(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="flex items-center gap-2 text-emerald-400 font-medium px-5 py-3 rounded-full bg-emerald-500/10 border border-emerald-500/20 animate-fade-in shadow-lg shadow-emerald-500/10">
+        <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span className="text-sm">You're on the waitlist! We'll email you soon. 🚀</span>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className={`flex flex-col sm:flex-row items-center gap-2.5 w-full max-w-md ${align === "center" ? "mx-auto" : ""}`}>
+      <input
+        type="email"
+        placeholder="Enter your email"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        disabled={loading}
+        className={`w-full px-5 py-3 rounded-full text-sm font-sans focus:outline-none transition-all duration-300 border ${
+          isDark 
+            ? "bg-black/60 border-white/10 text-white placeholder-white/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]" 
+            : "bg-white border-black/10 text-black placeholder-black/40 focus:border-[#76B900] focus:ring-1 focus:ring-[#76B900]"
+        }`}
+      />
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full sm:w-auto px-6 py-3 rounded-full text-sm font-medium font-sans bg-[#76B900] text-black hover:bg-[#85ce00] transition-colors duration-300 cursor-pointer shadow-lg shadow-[#76B900]/20 shrink-0 font-bold disabled:opacity-50"
+      >
+        {loading ? "Joining..." : "Join Waitlist"}
+      </button>
+    </form>
+  );
+}
 
 function CopyCommand({ cmd, isDark }: { cmd: string; isDark: boolean }) {
   const [copied, setCopied] = useState(false);
@@ -584,30 +682,25 @@ report.save(<span className="text-emerald-400">"benchmark_report.md"</span>){"\n
 // ---------- CTA ----------
 function CTA({ isDark }: { isDark: boolean }) {
   return (
-    <section id="install" className="relative py-32 px-4 overflow-hidden">
+    <section id="waitlist" className="relative py-32 px-4 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-[#76B900]/15 blur-3xl" />
       </div>
       <div className="relative max-w-3xl mx-auto text-center">
         <Reveal>
           <h2 className="font-serif text-5xl sm:text-7xl leading-tight tracking-tight mb-8">
-            Stop guessing.<br />
-            <span className="italic text-[#76B900] font-bold">Just run it.</span>
+            Get early access.<br />
+            <span className="italic text-[#76B900] font-bold">Join the waitlist.</span>
           </h2>
         </Reveal>
         <Reveal delay={100}>
           <p className={`mb-10 text-lg ${isDark ? "text-white/60" : "text-black/60"}`}>
-            Free, open source, no accounts. Works on the machine sitting in front of you.
+            Be the first to benchmark your model exports and find the ultimate configuration automatically. Launching soon.
           </p>
         </Reveal>
         <Reveal delay={200}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <CopyCommand cmd="pip install edgebench" isDark={isDark} />
-            <a href="https://github.com" className={`text-sm px-5 py-3 rounded-full border transition hover:scale-105 ${
-              isDark ? "border-white/20 hover:bg-white/5" : "border-black/20 hover:bg-black/5"
-            }`}>
-              Star on GitHub
-            </a>
+          <div className="flex justify-center">
+            <WaitlistForm isDark={isDark} />
           </div>
         </Reveal>
       </div>
